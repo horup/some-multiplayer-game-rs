@@ -1,4 +1,4 @@
-- 2021-11-21    20m worked on spawn showing, tweaked bounds a bit
+- 2021-11-21    50m worked on spawn showing, tweaked bounds a bit, split hostess into two git repos
 - 2021-11-20    80m added spawnpoints, added Map struct, added clamp to bounds to input handling, worked on respawning
 - 2021-11-19    110m introduced Parry2d, started working on polyline support, added colission to polyline, improved collision a bit
 - 2021-11-18    100m refactored thing into a single enum, improved ui and hearts a bit, added projectile hit effect
