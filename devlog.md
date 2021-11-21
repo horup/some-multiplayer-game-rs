@@ -1,0 +1,32 @@
+- 2021-11-21    20m worked on spawn showing, tweaked bounds a bit
+- 2021-11-20    80m added spawnpoints, added Map struct, added clamp to bounds to input handling, worked on respawning
+- 2021-11-19    110m introduced Parry2d, started working on polyline support, added colission to polyline, improved collision a bit
+- 2021-11-18    100m refactored thing into a single enum, improved ui and hearts a bit, added projectile hit effect
+- 2021-11-17    120m worked on effects, added preventdefault, added scoring
+- 2021-11-16    75m improved bots a bit,  refactored things, started working on event system, added simple shooting effect
+- 2021-11-15    60m worked on position lerp, worked on spawnign projectiles - not awesome but OK
+- 2021-11-14    60m added respawning, worked on lerp by transmitting tickrate to client, re-added out of bounds check
+- 2021-11-13    120m played with command pattern, but decided to revert, implemented rle of state, seems to work ok
+- 2021-11-12    40m worked on introduction of simple bots, worked on shooting hit, added shot actually hit
+- 2021-11-11    70m worked on collision handling, got move thing routine to work, re-added shooting on server
+- 2021-11-10    150m worked a bit on docker, added bounds check, added targeting shooting, reworked input handling a lot broke some stuff also
+- 2021-11-09    135m worked on local changes support, added simple colission detection, changed rendering a bit, worked on bullets
+- 2021-11-08    45m added changes to input
+- 2021-11-07    110m added mouse support, added tick support to server, refactored a bit, things no longer teleport, started working on bytes / second, added max_speed to thing, added delta to app
+- 2021-11-06    100m worked on client name and ui to support this in sample, removed typed gameserver reverted to untyped, renamed untyped, added player name support and removal of player
+- 2021-11-05    30m added autobuild using cargo watch
+- 2021-11-01    5m can build again    
+- 2021-10-28    70m refactored typings a bit, added run all all which depends on others
+- 2021-10-27    30m worked on typed support    
+- 2021-10-19    100m worked on sample state spawning, now builds both client and server same time, started working on TypedGame
+- 2021-10-18    130m worked on ping and latency test, removed generic from Server, added working snapshot for sample game, worked on state, added wip player spawning
+- 2021-10-17    100m made bincode trait , refactored a bit, removed some warnings, host now uses select!, worked on ping pong
+- 2021-10-16    65m worked on host
+- 2021-10-15    70m worked on spawning host
+- 2021-10-14    30m worked on spawning host
+- 2021-10-13    60m worked on spawning host
+- 2021-10-12    30m worked on joining host
+- 2021-10-11    90m worked on lobby abstraction, added support for host creation message, worked on host creation
+- 2021-10-10    20m created devlog, started masterserv migration
+- 2021-10-09    30m initival created. 
+

@@ -1,0 +1,145 @@
+<html>
+
+<head>
+    <title>Some Multiplayer Game</title>
+    <link rel="icon" type="image/png" href="/favicon.png"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: black;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            
+            transform: translate(-50%, -50%);
+            background-color: white;
+            cursor: crosshair;
+        }
+
+        .lds-dual-ring {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            width: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+
+        .lds-dual-ring:after {
+            content: " ";
+            display: block;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            border-color: #fff transparent #fff transparent;
+            animation: lds-dual-ring 1.2s linear infinite;
+        }
+
+        @keyframes lds-dual-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas width="640" height="480" id="primary">
+
+    </canvas>
+    <script type="module">
+       
+        import init, {message, start, update, keydown, keyup, connected, disconnected, mousedown, mousemove, mouseup} from './pkg/sample_lib.js';
+      
+        async function run() {
+            let res = await init();
+            window.send = (msg) => {
+            };
+           
+            start();
+
+            let _update = () => {
+                update();
+                requestAnimationFrame(_update);
+            }
+
+            _update();
+    
+            document.addEventListener('keydown', e=>{
+                keydown(e.keyCode, e.key);
+                e.preventDefault();
+            });
+    
+            document.addEventListener('keyup', e=>{
+                keyup(e.keyCode, e.key);
+            });
+
+            let mouseX = 0;
+            let mouseY = 0;
+            document.getElementById("primary").addEventListener("mousemove", (e)=>{
+                mouseX = e.offsetX;
+                mouseY = e.offsetY;
+                mousemove(e.offsetX, e.offsetY);
+            });
+
+            document.getElementById("primary").addEventListener("mousedown", (e)=> {
+                mousedown(e.button, e.offsetX, e.offsetY);
+            });
+
+            document.getElementById("primary").addEventListener("mouseup", (e)=> {
+                mouseup(e.button, e.offsetX, e.offsetY);
+            });
+
+            let ws = null;
+            let connect = ()=> {
+                ws = new WebSocket("ws://" + location.host);
+                ws.onopen = ()=>{
+                    connected();
+                }
+                ws.onmessage = (e)=>{
+                    e.data.arrayBuffer().then(buffer => {
+                        var buffer = new Uint8Array(buffer);
+                        message(buffer);
+                    })
+                }
+                ws.onerror = (e)=>{
+              
+
+                    ws.close();
+                }
+
+                ws.onclose = (e)=>{
+                    disconnected();
+                    connect();
+                }
+
+                window.send = (msg) => {
+                    if (ws != null && ws.readyState === WebSocket.OPEN) {
+                        ws.send(msg);
+                    }
+                }
+            };
+
+            connect();
+
+
+        }
+
+        run();
+    </script>
+</body>
+
+</html>
