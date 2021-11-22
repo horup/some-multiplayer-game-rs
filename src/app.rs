@@ -122,7 +122,6 @@ impl App {
     }
 
     pub fn init(&mut self) {
-        self.canvas.set_image_src(0, "dummy.png");
     }
 
     pub fn draw(&self) {

@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Some Multiplayer Game</title>
+    <title>Some Multiplayer Game v0.1.0</title>
     <link rel="icon" type="image/png" href="/favicon.png"/>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,6 +80,13 @@
     
             document.addEventListener('keydown', e=>{
                 keydown(e.keyCode, e.key);
+                if (e.key == 'F5') {
+                    return;
+                } 
+                else if (e.key == 'F12') {
+                    return;
+                }
+
                 e.preventDefault();
             });
     
@@ -105,11 +112,11 @@
 
             let ws = null;
             let connect = ()=> {
-                let scheme = "ws:";
-                if (location.indexOf("https") != -1) {
-                    scheme = "wss:";
+                let protocol = "ws:";
+                if (location.protocol.indexOf("https") != -1) {
+                    protocol = "wss:";
                 }
-                ws = new WebSocket(scheme + "//" + location.host);
+                ws = new WebSocket(protocol + "//" + location.host);
                 ws.onopen = ()=>{
                     connected();
                 }
