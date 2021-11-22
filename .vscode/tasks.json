@@ -52,5 +52,17 @@
 			"group": "build",
 			"label": "docker run",
 		},
+		{
+			"type": "shell",
+			"command":["docker", "tag", "some-multiplayer-game", "horup/some-multiplayer-game:latest"],
+			"group": "build",
+			"label": "docker tag",
+		},
+		{
+			"type": "shell",
+			"command":["docker", "push", "horup/some-multiplayer-game:latest"],
+			"group": "build",
+			"label": "docker push",
+		},
 	]
 }
