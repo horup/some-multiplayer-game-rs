@@ -105,7 +105,11 @@
 
             let ws = null;
             let connect = ()=> {
-                ws = new WebSocket("ws://" + location.host);
+                let scheme = "ws:";
+                if (location.indexOf("https") != -1) {
+                    scheme = "wss:";
+                }
+                ws = new WebSocket(scheme + "//" + location.host);
                 ws.onopen = ()=>{
                     connected();
                 }
