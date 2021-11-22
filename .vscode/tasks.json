@@ -42,9 +42,15 @@
 		
 		{
 			"type": "shell",
-			"command":["docker", "build", ".", "-t sample"],
+			"command":["docker", "build", ".", "-t some-multiplayer-game"],
 			"group": "build",
 			"label": "docker build",
+		},
+		{
+			"type": "shell",
+			"command":["docker", "run", "-p 8080:8080", "some-multiplayer-game"],
+			"group": "build",
+			"label": "docker run",
 		},
 	]
 }
