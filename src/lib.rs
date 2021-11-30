@@ -30,6 +30,8 @@ static mut LAST_TICK:f64 = 0.0;
 
 #[wasm_bindgen]
 pub fn start() {
+    let document = web_sys::window().unwrap().document().unwrap();
+    document.set_title(&format!("Some Multiplayer Game v{}", env!("CARGO_PKG_VERSION")));
     wasm_logger::init(wasm_logger::Config::default());
 
     unsafe {

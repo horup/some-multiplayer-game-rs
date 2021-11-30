@@ -1,6 +1,5 @@
 use std::f64::consts::PI;
 
-use glam::Vec2;
 use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, Storage, console::info, window};
 
