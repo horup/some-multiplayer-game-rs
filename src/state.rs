@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use generational_arena::{Arena, Index};
 use glam::Vec2;
-use hostess::Bincoded;
+use hostess::client::Bincoded;
 use serde::{Deserialize, Serialize};
 
 use crate::Thing;

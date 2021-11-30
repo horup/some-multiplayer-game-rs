@@ -7,8 +7,7 @@ use crate::{
 };
 use generational_arena::Arena;
 use glam::Vec2;
-use hostess::{log::info, uuid::Uuid, Bincoded, ClientMsg, ServerMsg};
-use web_sys::console::info;
+use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::ServerMsg};
 
 
 // Dev flags

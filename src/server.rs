@@ -1,8 +1,7 @@
-use std::{collections::{HashMap, VecDeque}, ops::IndexMut, time::Instant};
+use std::{collections::{HashMap, VecDeque}};
 use glam::Vec2;
-use hostess::{Bincoded, log::info, game_server::{Context, GameServer, GameServerMsg, HostMsg}, uuid::Uuid};
-use sample_lib::{CustomMsg, Input, Player, State, StateHistory, Thing, apply_input, update_things};
-use serde::{Serialize, Deserialize};
+use hostess::{client::Bincoded, server::{Ctx, GameServerMsg, HostMsg, Config}, uuid::Uuid};
+use sample_lib::{CustomMsg, Player, State, StateHistory, Thing, apply_input, update_things};
 use crate::bot::*;
 
 pub struct Server {
@@ -12,9 +11,8 @@ pub struct Server {
     bots:Vec<Bot>
 }
 
-impl Server {
-    pub fn new() -> Self {
-       
+impl Default for Server {
+    fn default() -> Self {
         Self {
             current:State::new(),
             players:HashMap::new(),
@@ -22,8 +20,10 @@ impl Server {
             history:StateHistory::new()
         }
     }
+}
 
-    pub fn update(&mut self, context:&mut Context) {
+impl Server {
+    pub fn update(&mut self, context:&mut Ctx) {
         // clear events 
         self.current.events.clear();
         self.current.timestamp = context.time;
@@ -44,7 +44,7 @@ impl Server {
             }
         }
 
-        let tick_rate = self.tick_rate() as u8;
+        let tick_rate = TICK_RATE as u8;
         
         // process bots
         for bot in self.bots.iter_mut() {
@@ -119,13 +119,16 @@ impl Server {
         self.history.remember(self.current.clone());
     }
 }
-
-impl GameServer for Server {
-    fn tick_rate(&self) -> u64 {
-        20
+const TICK_RATE:u64 = 20;
+impl hostess::server::Server for Server {
+    fn init(&mut self) -> Config {
+        Config {
+            tick_rate: TICK_RATE,
+            max_players: 8,
+        }
     }
 
-    fn tick(&mut self, mut context:Context) -> Context {
+    fn tick(&mut self, mut context:&mut Ctx) {
         while let Some(msg) = context.pop_host_msg() {
             match msg {
                 HostMsg::ClientJoined { client_id, mut client_name } => {
@@ -148,7 +151,7 @@ impl GameServer for Server {
 
                     push_custom_to(&mut context, client_id, CustomMsg::ServerPlayerInfo {
                         thing_id:None,
-                        tick_rate:self.tick_rate() as u8
+                        tick_rate:TICK_RATE as u8
                     });
                 },
                 HostMsg::ClientLeft { client_id } => {
@@ -167,20 +170,17 @@ impl GameServer for Server {
         }
 
         self.update(&mut context);
-
-       
-
-        return context;
     }
+
 }
 
-fn push_custom_all(context:&mut Context, msg:CustomMsg) {
+fn push_custom_all(context:&mut Ctx, msg:CustomMsg) {
     let msg = msg.to_bincode();
     context.push_game_msg(GameServerMsg::CustomToAll {
         msg
     });
 }
-fn push_custom_to(context:&mut Context, client_id:Uuid, msg:CustomMsg) {
+fn push_custom_to(context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
     let msg = msg.to_bincode();
     context.push_game_msg(GameServerMsg::CustomTo {
         client_id,
@@ -190,7 +190,7 @@ fn push_custom_to(context:&mut Context, client_id:Uuid, msg:CustomMsg) {
 
 impl Server {
     /// is called on each custom message received from the clients
-    pub fn recv_custom_msg(&mut self, context:&mut Context, client_id:Uuid, msg:CustomMsg) {
+    pub fn recv_custom_msg(&mut self, context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
         match msg {
             CustomMsg::ClientInput { input } => {
                 if let Some(player) = self.players.get_mut(&client_id) {

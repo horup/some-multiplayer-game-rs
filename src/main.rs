@@ -1,4 +1,6 @@
-use hostess::{game_server::{GameServerConstructor, GameServer}, log::{LevelFilter, info}, server::Server, tokio, uuid::Uuid};
+use hostess::{master::{Master}, log::{LevelFilter, info}, server::Constructor, client::Uuid, tokio};
+
+use crate::server::Server;
 mod server;
 mod bot;
 
@@ -10,12 +12,7 @@ async fn main() {
     let working_directory = std::env::current_dir().unwrap_or_default();
     info!("Working directory: {}", working_directory.to_str().unwrap_or_default());
 
-    let f = || {
-        let boxed:Box<dyn GameServer> = Box::new(server::Server::new());
-        return boxed;
-    };
-    let constructor = GameServerConstructor::new(Box::new(f));
-    let server:Server = Server::new("0.0.0.0:8080", constructor.clone());
-    server.lobby.write().await.new_host(Uuid::nil(), constructor);
-    let _ = server.spawn().await; 
+    let mut server = Master::new("0.0.0.0:8080", Constructor::new::<Server>());
+    server.new_server(Uuid::nil()).await;
+    let _ = server.start().await; 
 }

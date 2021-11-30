@@ -1,6 +1,6 @@
 use crate::{Input, State};
 use generational_arena::Index;
-use hostess::{Bincoded};
+use hostess::{client::Bincoded};
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]

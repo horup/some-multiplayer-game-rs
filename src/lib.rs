@@ -18,7 +18,7 @@ mod simulation;
 pub use simulation::*;
 
 mod platform;
-use hostess::{ServerMsg, log::{error, info}};
+use hostess::{client::ServerMsg, log::{error, info}};
 pub use platform::*;
 
 
