@@ -1,3 +1,4 @@
+- 2021-11-30    100m worked on server selection and max player and automatic server selection
 - 2021-11-22    80m added working docker build, prevent default only sometimes
 - 2021-11-21    50m worked on spawn showing, tweaked bounds a bit, split hostess into two git repos
 - 2021-11-20    80m added spawnpoints, added Map struct, added clamp to bounds to input handling, worked on respawning
