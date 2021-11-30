@@ -13,6 +13,9 @@ async fn main() {
     info!("Working directory: {}", working_directory.to_str().unwrap_or_default());
 
     let mut server = Master::new("0.0.0.0:8080", Constructor::new::<Server>());
-    server.new_server(Uuid::nil()).await;
+    
+    for i in 0..8 {
+        server.new_server(Uuid::nil()).await;
+    }
     let _ = server.start().await; 
 }

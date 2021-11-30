@@ -7,15 +7,17 @@ use crate::{
 };
 use generational_arena::Arena;
 use glam::Vec2;
-use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::ServerMsg};
+use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}};
 
 
 // Dev flags
 static DEV_QUICK_LOGIN:bool         = false;
+static DEV_QUICK_JOIN:bool          = false;
 static DEV_SHOW_SPAWNPOINTS:bool    = false;
 static DEV_SHOW_NETSTAT:bool        = false;
 
 pub struct App {
+    servers:Vec<HostInfo>,
     player_name: String,
     debug: bool,
     app_state: AppState,
@@ -54,8 +56,9 @@ enum AppState {
     EnterName { name: String },
 
     /// player is ready to join
-    ReadyToJoin,
-
+    JoinLobby,
+    InLobby,
+    JoinServer {server:HostInfo},
     /// when in game and playing
     InGame,
 }
@@ -117,6 +120,7 @@ impl App {
             lerp_alpha: 0.0,
             show_score: false,
             effects: Arena::new(),
+            servers:Vec::new()
         }
     }
 
@@ -317,7 +321,26 @@ impl App {
     fn draw_ui_centercontent(&self, cx: f64, cy: f64) {
         self.canvas.set_text_style("center", "middle");
         match &self.app_state {
-            AppState::Initial | AppState::ReadyToJoin => {
+            AppState::InLobby => {
+                let mut y = 5.0;
+                self.canvas.fill_text("Avaliable Servers", cx, y);
+                let mut i = 0;
+                y += 2.0;
+                for host in self.servers.iter() {
+                    self.canvas.fill_text(&format!("{}. Server - players {}/{}", i + 1, host.current_players, host.max_players), cx, y);
+                    y += 1.0;
+                    i += 1;
+                }
+
+                y+= 1.0;
+                self.canvas.fill_text("Press Enter to auto join the recommended server", cx, y);
+                y += 1.0;
+                self.canvas.fill_text("or Press 1..8 to join a specific server...", cx, y);
+            },
+            AppState::JoinServer {server} => {
+                self.canvas.fill_text(&format!("Joining server {:?}", server.id), cx, cy);
+            },
+            AppState::Initial | AppState::JoinLobby => {
                 self.canvas.fill_text(&self.connection_status, cx, cy);
             }
             AppState::EnterName { name } => {
@@ -433,10 +456,10 @@ impl App {
                 self.connection_status = "Connected to Server".into();
             }
             ServerMsg::Hosts { hosts } => {
-                if let Some(host) = hosts.first() {
-                    self.connection_status = format!("Joining host {}..", host.id);
-                    let id = host.id;
-                    self.send(ClientMsg::JoinHost { host_id: id });
+                let c = self.servers.len();
+                self.servers = hosts.clone();
+                if c == 0 {
+                    self.new_app_state(AppState::InLobby);
                 }
             }
             ServerMsg::HostJoined { host } => {
@@ -613,7 +636,7 @@ impl App {
                 } else if key == "Enter" && name.len() > 0 {
                     self.player_name = name.clone();
                     set_item("player_name", self.player_name.as_str());
-                    self.new_app_state(AppState::ReadyToJoin {});
+                    self.new_app_state(AppState::JoinLobby {});
                 } else if key == "Backspace" && name.len() > 0 {
                     *name = name[0..name.len() - 1].into();
                 }
@@ -677,12 +700,30 @@ impl App {
     fn new_app_state(&mut self, new_app_state: AppState) {
         self.app_state = new_app_state;
         match &self.app_state {
-            AppState::ReadyToJoin => {
+            AppState::JoinLobby => {
                 self.connection_status = format!("Sending Hello");
                 self.client_messages.push(ClientMsg::Hello {
                     client_id: self.id.clone(),
                     client_name: self.player_name.clone(),
                 });
+            },
+            AppState::InLobby => {
+                if DEV_QUICK_JOIN {
+                    if let Some(host) = self.servers.first() {
+                        self.connection_status = format!("Joining host {}..", host.id);
+                        let id = host.id;
+                        self.send(ClientMsg::JoinHost { host_id: id });
+                    }
+                }
+            },
+            AppState::JoinServer { server} => {
+                if DEV_QUICK_JOIN {
+                    if let Some(host) = self.servers.first() {
+                        self.connection_status = format!("Joining host {}..", host.id);
+                        let id = host.id;
+                        self.send(ClientMsg::JoinHost { host_id: id });
+                    }
+                }
             },
             AppState::EnterName { name} => {
                 if DEV_QUICK_LOGIN {
