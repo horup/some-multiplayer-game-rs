@@ -7,7 +7,7 @@ use crate::{
 };
 use generational_arena::Arena;
 use glam::Vec2;
-use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}};
+use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}, log::info};
 
 
 // Dev flags
@@ -630,6 +630,37 @@ impl App {
 
     pub fn keydown(&mut self, code: KeyCode, key: &str) {
         match &mut self.app_state {
+            AppState::InLobby => {
+                if key == "Enter" {
+                    // select recommended server
+                    let mut recommended_server:Option<HostInfo> = None;
+                    for server in self.servers.iter() {
+                        // find the server with most players but still space avaliable
+                        if server.current_players < server.max_players {
+                            match recommended_server {
+                                Some(v) => {
+                                    if v.current_players < server.current_players {
+                                        recommended_server = Some(server.clone());
+                                    }
+                                },
+                                None => recommended_server = Some(server.clone()),
+                            }
+                        }
+                    }
+                    
+                } else {
+                    // select specific server
+                    if let Ok(key) = key.to_string().parse::<i32>() {
+                        let i = key - 1;
+                        let server = self.servers.get(i as usize);
+                        if let Some(server) = server {
+                            self.new_app_state(AppState::JoinServer {
+                                server: server.clone()
+                            });
+                        }
+                    }
+                }
+            },
             AppState::EnterName { name } => {
                 if key.is_ascii() && name.len() < 16 && key.len() == 1 {
                     *name += key;
