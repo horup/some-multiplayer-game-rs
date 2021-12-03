@@ -633,21 +633,26 @@ impl App {
             AppState::InLobby => {
                 if key == "Enter" {
                     // select recommended server
-                    let mut recommended_server:Option<HostInfo> = None;
+                    let mut recommended_server_option:Option<HostInfo> = None;
                     for server in self.servers.iter() {
                         // find the server with most players but still space avaliable
                         if server.current_players < server.max_players {
-                            match recommended_server {
-                                Some(v) => {
-                                    if v.current_players < server.current_players {
-                                        recommended_server = Some(server.clone());
+                            match &recommended_server_option {
+                                Some(recommended_server) => {
+                                    if recommended_server.current_players < server.current_players && server.current_players < server.max_players {
+                                        recommended_server_option = Some(server.clone());
                                     }
                                 },
-                                None => recommended_server = Some(server.clone()),
+                                None => recommended_server_option = Some(server.clone()),
                             }
                         }
                     }
-                    
+
+                    if let Some(server) = recommended_server_option {
+                        self.new_app_state(AppState::JoinServer {
+                            server: server.clone()
+                        });
+                    }
                 } else {
                     // select specific server
                     if let Ok(key) = key.to_string().parse::<i32>() {
@@ -748,13 +753,9 @@ impl App {
                 }
             },
             AppState::JoinServer { server} => {
-                if DEV_QUICK_JOIN {
-                    if let Some(host) = self.servers.first() {
-                        self.connection_status = format!("Joining host {}..", host.id);
-                        let id = host.id;
-                        self.send(ClientMsg::JoinHost { host_id: id });
-                    }
-                }
+                self.connection_status = format!("Joining host {}..", server.id);
+                let id = server.id;
+                self.send(ClientMsg::JoinHost { host_id: id });
             },
             AppState::EnterName { name} => {
                 if DEV_QUICK_LOGIN {

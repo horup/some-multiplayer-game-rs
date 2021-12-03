@@ -1,3 +1,4 @@
+- 2021-12-03    15 worked on server selection and got it to work
 - 2021-12-02    15m worked on server selection
 - 2021-11-30    100m worked on server selection and max player and automatic server selection
 - 2021-11-22    80m added working docker build, prevent default only sometimes
