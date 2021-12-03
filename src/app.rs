@@ -532,6 +532,13 @@ impl App {
             }
         }
 
+        // if in lobby, refresh list of servers each 60th update
+        if self.app_state == AppState::InLobby && self.updates % 60 == 0 {
+            self.send(ClientMsg::RefreshHosts {
+            });
+        }
+      
+
         // process events
         for e in self.current.events.drain(..) {
             match e {
