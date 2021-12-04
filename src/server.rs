@@ -124,7 +124,7 @@ impl hostess::server::Server for Server {
     fn init(&mut self) -> Config {
         Config {
             tick_rate: TICK_RATE,
-            max_players: 2,
+            max_players: 8,
         }
     }
 
