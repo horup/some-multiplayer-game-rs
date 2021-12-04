@@ -2,7 +2,7 @@ use std::{collections::VecDeque, f32::consts::PI};
 
 use super::Canvas;
 use crate::{
-    apply_input, get_item, performance_now_ms, player, set_item, update_things, CustomMsg, Input,
+    apply_input, get_item, performance_now_ms, set_item, CustomMsg, Input,
     State, StateHistory, Thing,
 };
 use generational_arena::Arena;
