@@ -20,7 +20,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag horup/some-multiplayer-game:$(date +%s)
+      run: docker build . --file Dockerfile --tag horup/some-multiplayer-game:latest
 
     - name: Push to registry
-      run: docker push horup/some-multiplayer-game:$(date +%s)
+      run: docker push horup/some-multiplayer-game:latest
