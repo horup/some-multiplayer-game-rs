@@ -32,7 +32,7 @@ pub struct App {
     input: Input,
     input_history: VecDeque<Input>,
     updates: u64,
-    server_tick_rate: u8,
+    server_tick_rate: f32,
     since_last_snapshot_sec: f32,
     lerp_alpha: f32,
     effects: Arena<Effect>,
@@ -115,7 +115,7 @@ impl App {
             client_bytes_sec: 0.0,
             updates: 0,
             history: StateHistory::new(),
-            server_tick_rate: 64,
+            server_tick_rate: 64.0,
             since_last_snapshot_sec: 0.0,
             lerp_alpha: 0.0,
             show_score: false,
@@ -411,6 +411,7 @@ impl App {
                 state,
                 input_timestamp_sec,
             } => {
+                self.server_tick_rate = 1.0 / self.since_last_snapshot_sec;
                 self.since_last_snapshot_sec = 0.0;
                 self.history.remember(state.clone());
                 self.current = state;
@@ -438,7 +439,7 @@ impl App {
                 thing_id,
                 tick_rate,
             } => {
-                self.server_tick_rate = tick_rate;
+                //self.server_tick_rate = tick_rate;
                 self.input.thing_id = thing_id;
                 if let Some(thing_id) = thing_id {
                     if let Some(thing) = self.current.things.get(thing_id) {
