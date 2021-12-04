@@ -1,3 +1,4 @@
+- 2021-12-04    20m made app tick rate calculated, added github actions support
 - 2021-12-03    30m worked on server selection and got it to work, added server refresh
 - 2021-12-02    15m worked on server selection
 - 2021-11-30    100m worked on server selection and max player and automatic server selection
