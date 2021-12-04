@@ -20,4 +20,4 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag horup/some-multiplayer-game:$(date +%s)
     - name: Push to registry
-      run docker push
+      run: docker push horup/some-multiplayer-game:$(date +%s)
