@@ -137,8 +137,8 @@ impl Thing {
     }
 
     pub fn lerp_pos(&self, prev:&Thing, alpha:f32) -> Vec2 {
-        let pos = *self.pos();
-        let v = pos - *prev.pos();
+        let pos = *prev.pos();
+        let v = *self.pos() - pos;
         if v.length() < 2.0 {
             let v = v * alpha;
             return pos + v;

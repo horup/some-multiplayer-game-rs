@@ -11,6 +11,7 @@ use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMs
 
 
 // Dev flags
+static DEV_SHOW_INTERPOLATION:bool  = false;
 static DEV_QUICK_LOGIN:bool         = false;
 static DEV_QUICK_JOIN:bool          = false;
 static DEV_SHOW_SPAWNPOINTS:bool    = false;
@@ -173,6 +174,7 @@ impl App {
         self.canvas.draw_circle(x, y, *thing.radius() as f64);
     }
 
+
     fn draw_thing_name(&self, thing: &Thing, pos: Vec2) {
         let x = pos.x as f64;
         let y = pos.y as f64;
@@ -226,6 +228,18 @@ impl App {
 
             if let Some(prev) = self.history.prev().things.get(id) {
                 self.draw_thing(thing, thing.lerp_pos(prev, self.lerp_alpha));
+
+                if DEV_SHOW_INTERPOLATION {
+                    let prev = prev.pos();
+                    let curr = thing.pos();
+                    self.canvas.save();
+                    self.canvas.set_stroke_style("red");
+                    self.canvas.draw_circle(prev.x as f64, prev.y as f64, 0.25);
+
+                    self.canvas.set_stroke_style("blue");
+                    self.canvas.draw_circle(curr.x as f64, curr.y as f64, 0.25);
+                    self.canvas.restore();
+                }
             }
 
         }
