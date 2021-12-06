@@ -15,7 +15,7 @@ static DEV_QUICK_LOGIN:bool         = false;
 static DEV_QUICK_JOIN:bool          = false;
 static DEV_SHOW_SPAWNPOINTS:bool    = false;
 static DEV_SHOW_NETSTAT:bool        = false;
-static instructions:[&str;3]        = ["Use WASD to Move.", "Use the mouse to point and shoot.", "Use tab to show the score"];
+static INSTRUCTIONS:[&str;3]        = ["Use WASD to Move.", "Use the mouse to point and shoot.", "Use tab to show the score"];
 
 pub struct App {
     servers:Vec<HostInfo>,
@@ -344,7 +344,7 @@ impl App {
                 y += 1.0;
                 self.canvas.fill_text("or Press 1..8 to join a specific server...", cx, y);
                 y += 2.0;
-                for line in instructions {
+                for line in INSTRUCTIONS {
                     self.canvas.fill_text(line, cx, y);
                     y += 1.0;
                 }
