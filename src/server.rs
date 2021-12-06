@@ -1,7 +1,7 @@
 use std::{collections::{HashMap, VecDeque}};
 use glam::Vec2;
 use hostess::{client::Bincoded, server::{Ctx, GameServerMsg, HostMsg, Config}, uuid::Uuid};
-use sample_lib::{CustomMsg, Player, State, StateHistory, Thing, apply_input, update_things};
+use sample_lib::{CustomMsg, Player, State, StateHistory, Thing, apply_input, update_things, Event};
 use crate::bot::*;
 
 pub struct Server {
@@ -91,6 +91,9 @@ impl Server {
                                     let dir = dir.normalize();
                                     let mut v = dir * 20.0;
                                     let p = Thing::new_projectile(player.pos, v, thing_id);
+                                    self.current.events.push(Event::ProjectileHit {
+                                        pos:player.pos.clone()
+                                    });
                                     spawn.push(p);
                                 }
                             }

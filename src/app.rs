@@ -582,8 +582,12 @@ impl App {
                         radius: 0.25,
                     }));
 
-                    // play_sound("sfx/hit.mp3");
+                    play_sound("sfx/hit.mp3");
                 },
+                crate::Event::ProjectileFired { pos } => {
+                    play_sound("sfx/shoot.mp3");
+                },
+                
             }
         }
 

@@ -15,6 +15,9 @@ pub enum Event {
     },
     ProjectileHit {
         pos:Vec2
+    },
+    ProjectileFired {
+        pos:Vec2
     }
 }
 
