@@ -2,7 +2,7 @@ use std::{collections::VecDeque, f32::consts::PI};
 
 use super::Canvas;
 use crate::{
-    apply_input, get_item, performance_now_ms, set_item, CustomMsg, Input,
+    apply_input, get_item, performance_now_ms, set_item, reload, CustomMsg, Input,
     State, StateHistory, Thing,
 };
 use generational_arena::Arena;
@@ -15,6 +15,7 @@ static DEV_QUICK_LOGIN:bool         = false;
 static DEV_QUICK_JOIN:bool          = false;
 static DEV_SHOW_SPAWNPOINTS:bool    = false;
 static DEV_SHOW_NETSTAT:bool        = false;
+static instructions:[&str;3]        = ["Use WASD to Move.", "Use the mouse to point and shoot.", "Use tab to show the score"];
 
 pub struct App {
     servers:Vec<HostInfo>,
@@ -336,6 +337,11 @@ impl App {
                 self.canvas.fill_text("Press Enter to auto join the recommended server", cx, y);
                 y += 1.0;
                 self.canvas.fill_text("or Press 1..8 to join a specific server...", cx, y);
+                y += 2.0;
+                for line in instructions {
+                    self.canvas.fill_text(line, cx, y);
+                    y += 1.0;
+                }
             },
             AppState::JoinServer {server} => {
                 self.canvas.fill_text(&format!("Joining server {:?}", server.id), cx, cy);
@@ -711,6 +717,10 @@ impl App {
             _ => {}
         };
 
+
+        if key == "Escape" {
+            reload();
+        }
         // w = 87
         // s = 83
         // a = 65

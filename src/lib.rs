@@ -42,6 +42,11 @@ pub fn start() {
 }
 
 #[wasm_bindgen]
+pub fn reload() {
+    web_sys::window().unwrap().location().reload();
+}
+
+#[wasm_bindgen]
 pub fn update() {
     unsafe {
         if let Some(client) = &mut APP {
