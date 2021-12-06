@@ -7,7 +7,7 @@ use crate::{
 };
 use generational_arena::Arena;
 use glam::Vec2;
-use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}, log::info};
+use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}};
 
 
 // Dev flags
@@ -256,7 +256,7 @@ impl App {
 
         self.draw_map();
 
-        for (id, effect) in self.effects.iter() {
+        for (_, effect) in self.effects.iter() {
             self.draw_effect(effect);
         }
     }
@@ -299,8 +299,6 @@ impl App {
         
         if show_score {
             let mut y = 3.0;
-            let x = 1.0;
-
             self.canvas.save();
             self.canvas.set_text_style("center", "middle");
             self.canvas.fill_text("Score", cx as f64, y);
@@ -332,7 +330,7 @@ impl App {
             self.canvas.restore();
         }
 
-        let mut y = 3.0;
+        let y = 3.0;
         if self.current.warmup && self.updates % 60 > 30 {
             self.canvas.set_text_style("center", "middle");
             self.canvas.fill_text("Warmup with bots, awaiting more players to join...", cx, y);
@@ -463,9 +461,8 @@ impl App {
             }
             CustomMsg::ServerPlayerInfo {
                 thing_id,
-                tick_rate,
+                tick_rate:_,
             } => {
-                //self.server_tick_rate = tick_rate;
                 self.input.thing_id = thing_id;
                 if let Some(thing_id) = thing_id {
                     if let Some(thing) = self.current.things.get(thing_id) {
@@ -568,7 +565,7 @@ impl App {
         // process events
         for e in self.current.events.drain(..) {
             match e {
-                crate::Event::PlayerDied { thing_id, pos } => {
+                crate::Event::PlayerDied { thing_id:_, pos } => {
                     // spawn smokes at location
                     let max = 4;
                     for i in 0..max {
@@ -596,7 +593,7 @@ impl App {
                         radius: 0.25,
                     }));
                 },
-                crate::Event::ProjectileFired { pos } => {
+                crate::Event::ProjectileFired { pos:_ } => {
                     play_sound("sfx/laser2.ogg");
                 },
                 
@@ -621,7 +618,7 @@ impl App {
             self.effects.remove(id);
         });
 
-        for (id, thing) in self.current.things.iter() {
+        for (_id, thing) in self.current.things.iter() {
             if let Thing::Projectile(thing) = thing {
                 self.effects.insert(Effect::Smoke(Smoke {
                     pos: thing.pos,
@@ -696,10 +693,10 @@ impl App {
                     // select specific server
                     if let Ok(key) = key.to_string().parse::<i32>() {
                         let i = key - 1;
-                        let server = self.servers.get(i as usize);
-                        if let Some(server) = server {
+                        if let Some(server) =  self.servers.get(i as usize) {
+                            let server = server.clone();
                             self.new_app_state(AppState::JoinServer {
-                                server: server.clone()
+                                server: server
                             });
                         }
                     }
@@ -800,7 +797,7 @@ impl App {
                 let id = server.id;
                 self.send(ClientMsg::JoinHost { host_id: id });
             },
-            AppState::EnterName { name} => {
+            AppState::EnterName { name:_} => {
                 if DEV_QUICK_LOGIN {
                     self.client_messages.push(ClientMsg::Hello {
                         client_id: self.id.clone(),

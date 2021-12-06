@@ -1,24 +1,20 @@
-use generational_arena::{Arena, Index};
+use generational_arena::{Index};
 use glam::Vec2;
-use hostess::log::info;
 use parry2d::{
     math::Isometry,
-    query::{contact, details::contact_ball_ball},
+    query::{contact},
     shape::{Ball, Polyline},
 };
-use rand::random;
+use crate::{Event, Input, Solid, State, Thing};
 
-use crate::{Event, Input, Player, Solid, State, Thing};
-
-pub fn apply_input(state: &mut State, input: &Input, authorative: bool) {
+pub fn apply_input(state: &mut State, input: &Input, _authorative: bool) {
     // how to avoid clone?
     let cloned = state.clone();
     if let Some(thing_id) = input.thing_id {
         if let Some(thing) = state.things.get_mut(thing_id) {
             if let Thing::Player(player) = thing {
-                let mut new_pos = player.pos;
                 if player.is_alive() {
-                    new_pos = input.movement * player.speed as f32 + *thing.pos();
+                    let new_pos = input.movement * player.speed as f32 + *thing.pos();
                     move_thing_direct_sweep((thing_id, thing), new_pos, &cloned, None);
                     clamp_to_bounds(thing, state.width, state.height);
                 }

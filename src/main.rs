@@ -14,7 +14,7 @@ async fn main() {
 
     let mut server = Master::new("0.0.0.0:8080", Constructor::new::<Server>());
     
-    for i in 0..8 {
+    for _ in 0..8 {
         server.new_server(Uuid::nil()).await;
     }
     let _ = server.start().await; 

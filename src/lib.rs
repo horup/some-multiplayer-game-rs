@@ -18,7 +18,7 @@ mod simulation;
 pub use simulation::*;
 
 mod platform;
-use hostess::{client::ServerMsg, log::{error, info}};
+use hostess::{client::ServerMsg, log::{error}};
 pub use platform::*;
 
 
@@ -43,7 +43,7 @@ pub fn start() {
 
 #[wasm_bindgen]
 pub fn reload() {
-    web_sys::window().unwrap().location().reload();
+    let _ = web_sys::window().unwrap().location().reload();
 }
 
 #[wasm_bindgen]

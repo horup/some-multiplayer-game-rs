@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 
 use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, Storage, console::info, window};
+use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, window};
 
 
 pub fn set_item(key:&str, value:&str) {
@@ -157,6 +157,6 @@ impl Canvas {
 pub fn play_sound(path:&str) {
     let result = web_sys::HtmlAudioElement::new_with_src(path);
     if let Ok(result) = result {
-        result.play();
+        let _ = result.play();
     }
 }

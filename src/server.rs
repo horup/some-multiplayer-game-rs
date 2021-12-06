@@ -1,5 +1,4 @@
 use std::{collections::{HashMap, VecDeque}};
-use glam::Vec2;
 use hostess::{client::Bincoded, server::{Ctx, GameServerMsg, HostMsg, Config}, uuid::Uuid};
 use sample_lib::{CustomMsg, Player, State, StateHistory, Thing, apply_input, update_things, Event};
 use crate::bot::*;
@@ -59,7 +58,7 @@ impl Server {
             // if player has no 'thing'
             // ensure one is spawned for the player
             if player.thing == None {
-                let mut thing = Thing::new_player(&player.client_name);
+                let thing = Thing::new_player(&player.client_name);
                 player.thing = Some(self.current.things.insert(thing));
                 // let the player know his thing id and tick_rate
                 push_custom_to(context, player.client_id, CustomMsg::ServerPlayerInfo {
@@ -70,10 +69,9 @@ impl Server {
 
             // apply input from players
             let mut trigger = false;
-            let mut ability_target = Vec2::new(0.0, 0.0);
             for input in player.inputs.drain(..) {
                 player.latest_input_timestamp_sec = input.timestamp_sec;
-                ability_target = input.ability_target;
+                let ability_target = input.ability_target;
                 if input.ability_trigger {
                     trigger = true;
                 }
@@ -89,7 +87,7 @@ impl Server {
                                 let dir = ability_target - player.pos;
                                 if dir.length() > 0.0 {
                                     let dir = dir.normalize();
-                                    let mut v = dir * 20.0;
+                                    let v = dir * 20.0;
                                     let p = Thing::new_projectile(player.pos, v, thing_id);
                                     self.current.events.push(Event::ProjectileFired {
                                         pos:player.pos.clone()
@@ -180,12 +178,6 @@ impl hostess::server::Server for Server {
 
 }
 
-fn push_custom_all(context:&mut Ctx, msg:CustomMsg) {
-    let msg = msg.to_bincode();
-    context.push_game_msg(GameServerMsg::CustomToAll {
-        msg
-    });
-}
 fn push_custom_to(context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
     let msg = msg.to_bincode();
     context.push_game_msg(GameServerMsg::CustomTo {
@@ -196,7 +188,7 @@ fn push_custom_to(context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
 
 impl Server {
     /// is called on each custom message received from the clients
-    pub fn recv_custom_msg(&mut self, context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
+    pub fn recv_custom_msg(&mut self, _context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
         match msg {
             CustomMsg::ClientInput { input } => {
                 if let Some(player) = self.players.get_mut(&client_id) {
