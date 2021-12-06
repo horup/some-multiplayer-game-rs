@@ -571,7 +571,7 @@ impl App {
                         self.effects.insert(Effect::Smoke(smoke));
                     }
 
-                    play_sound("sfx/died.mp3");
+                    play_sound("sfx/explosion2.ogg");
                 }
                 crate::Event::ProjectileHit { pos } => {
                     self.effects.insert(Effect::Smoke(Smoke {
@@ -581,11 +581,9 @@ impl App {
                         vel: Vec2::default(),
                         radius: 0.25,
                     }));
-
-                    play_sound("sfx/hit.mp3");
                 },
                 crate::Event::ProjectileFired { pos } => {
-                    play_sound("sfx/shoot.mp3");
+                    play_sound("sfx/laser2.ogg");
                 },
                 
             }

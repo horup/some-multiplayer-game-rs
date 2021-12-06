@@ -1,4 +1,4 @@
-- 2021-12-05    30m added reload, added instructions, added sound support
+- 2021-12-05    45m added reload, added instructions, added sound support
 - 2021-12-04    20m made app tick rate calculated, added github actions support
 - 2021-12-03    30m worked on server selection and got it to work, added server refresh
 - 2021-12-02    15m worked on server selection

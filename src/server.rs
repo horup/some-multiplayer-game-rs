@@ -91,7 +91,7 @@ impl Server {
                                     let dir = dir.normalize();
                                     let mut v = dir * 20.0;
                                     let p = Thing::new_projectile(player.pos, v, thing_id);
-                                    self.current.events.push(Event::ProjectileHit {
+                                    self.current.events.push(Event::ProjectileFired {
                                         pos:player.pos.clone()
                                     });
                                     spawn.push(p);
