@@ -47,6 +47,7 @@ pub struct State {
     pub map:Map,
     pub width: f32,
     pub height: f32,
+    pub warmup:bool
 }
 
 impl Bincoded for State {
@@ -105,12 +106,8 @@ impl State {
         map.spawn_points.push([2.0, 15.0].into());
         map.spawn_points.push([38.0, 15.0].into());
 
-
- 
-
-
-
         Self {
+            warmup:true,
             next_spawn:-1,
             timestamp:0.0,
             things: Arena::new(),

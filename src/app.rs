@@ -317,6 +317,12 @@ impl App {
 
             self.canvas.restore();
         }
+
+        let mut y = 3.0;
+        if self.current.warmup && self.updates % 60 > 30 {
+            self.canvas.set_text_style("center", "middle");
+            self.canvas.fill_text("Warmup with bots, awaiting more players to join...", cx, y);
+        }
     }
 
     fn draw_ui_centercontent(&self, cx: f64, cy: f64) {
@@ -544,7 +550,6 @@ impl App {
             self.send(ClientMsg::RefreshHosts {
             });
         }
-      
 
         // process events
         for e in self.current.events.drain(..) {

@@ -28,6 +28,7 @@ impl Server {
         self.current.events.clear();
         self.current.timestamp = context.time;
         if self.players.len() < 2 {
+            self.current.warmup = true;
             // less than two players and no bots, ensure some bots are spawned
             if self.bots.len() == 0 {
                 while self.bots.len() < 4 {
@@ -38,10 +39,12 @@ impl Server {
                 }
             }
         } else {
+            self.current.warmup = false;
             // more than two players, remove bots and their things
             for bot in self.bots.drain(..) {
                 self.current.things.remove(bot.thing_id);
             }
+
         }
 
         let tick_rate = TICK_RATE as u8;
