@@ -618,15 +618,17 @@ impl App {
             self.effects.remove(id);
         });
 
-        for (_id, thing) in self.current.things.iter() {
-            if let Thing::Projectile(thing) = thing {
-                self.effects.insert(Effect::Smoke(Smoke {
-                    pos: thing.pos,
-                    time: 0.0,
-                    end_time: 0.5,
-                    vel: Vec2::new(0.0, 0.0),
-                    radius: 0.05,
-                }));
+        for (id, thing) in self.current.things.iter() {
+            if let Thing::Projectile(_) = thing {
+                if let Some(prev) = self.history.prev().things.get(id) {
+                    self.effects.insert(Effect::Smoke(Smoke {
+                        pos: *prev.pos(),
+                        time: 0.0,
+                        end_time: 0.5,
+                        vel: Vec2::new(0.0, 0.0),
+                        radius: 0.05,
+                    }));
+                }
             }
         }
 
