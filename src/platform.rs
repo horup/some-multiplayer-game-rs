@@ -152,3 +152,11 @@ impl Canvas {
         
     }
 }
+
+
+pub fn play_sound(path:&str) {
+    let result = web_sys::HtmlAudioElement::new_with_src(path);
+    if let Ok(result) = result {
+        result.play();
+    }
+}

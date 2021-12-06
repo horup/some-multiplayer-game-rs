@@ -3,7 +3,7 @@ use std::{collections::VecDeque, f32::consts::PI};
 use super::Canvas;
 use crate::{
     apply_input, get_item, performance_now_ms, set_item, reload, CustomMsg, Input,
-    State, StateHistory, Thing,
+    State, StateHistory, Thing, play_sound,
 };
 use generational_arena::Arena;
 use glam::Vec2;
@@ -565,6 +565,8 @@ impl App {
 
                         self.effects.insert(Effect::Smoke(smoke));
                     }
+
+                    play_sound("sfx/died.mp3");
                 }
                 crate::Event::ProjectileHit { pos } => {
                     self.effects.insert(Effect::Smoke(Smoke {
@@ -574,6 +576,8 @@ impl App {
                         vel: Vec2::default(),
                         radius: 0.25,
                     }));
+
+                    // play_sound("sfx/hit.mp3");
                 },
             }
         }
