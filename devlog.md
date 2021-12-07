@@ -1,3 +1,4 @@
+- 2021-12-07    50m updated hostess to 0.4.0, fixed pop in of dead things
 - 2021-12-05    70m added reload, added instructions, added sound support, fixed lerp issue, improved smoke
 - 2021-12-04    20m made app tick rate calculated, added github actions support
 - 2021-12-03    30m worked on server selection and got it to work, added server refresh

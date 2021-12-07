@@ -142,7 +142,7 @@ impl Thing {
             return pos + v;
         }
 
-        return pos;
+        return *self.pos();
     }
 
     pub fn no_interpolate(&self) -> bool {
