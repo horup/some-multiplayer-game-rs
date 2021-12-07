@@ -1,5 +1,5 @@
 use std::{collections::{HashMap, VecDeque}};
-use hostess::{client::Bincoded, server::{Ctx, GameServerMsg, HostMsg, Config}, uuid::Uuid};
+use hostess::{client::Bincoded, server::{Ctx, OutMsg, InMsg, Config}, uuid::Uuid};
 use sample_lib::{CustomMsg, Player, State, StateHistory, Thing, apply_input, update_things, Event};
 use crate::bot::*;
 
@@ -133,9 +133,9 @@ impl hostess::server::Server for Server {
     }
 
     fn tick(&mut self, mut context:&mut Ctx) {
-        while let Some(msg) = context.pop_host_msg() {
+        while let Some(msg) = context.pop_msg() {
             match msg {
-                HostMsg::ClientJoined { client_id, mut client_name } => {
+                InMsg::ClientJoined { client_id, mut client_name } => {
                     if !self.players.contains_key(&client_id) {
                         client_name.truncate(16);
                         self.players.insert(client_id, Player {
@@ -158,14 +158,14 @@ impl hostess::server::Server for Server {
                         tick_rate:TICK_RATE as u8
                     });
                 },
-                HostMsg::ClientLeft { client_id } => {
+                InMsg::ClientLeft { client_id } => {
                     if let Some(player) = self.players.remove(&client_id) {
                         if let Some(thing_id) = player.thing {
                             self.current.things.remove(thing_id);
                         }
                     }
                 },
-                HostMsg::CustomMsg { client_id, msg } => {
+                InMsg::CustomMsg { client_id, msg } => {
                     if let Some(msg) = Bincoded::from_bincode(&msg) {
                         self.recv_custom_msg(&mut context, client_id, msg);
                     }
@@ -180,7 +180,7 @@ impl hostess::server::Server for Server {
 
 fn push_custom_to(context:&mut Ctx, client_id:Uuid, msg:CustomMsg) {
     let msg = msg.to_bincode();
-    context.push_game_msg(GameServerMsg::CustomTo {
+    context.push_msg(OutMsg::CustomTo {
         client_id,
         msg
     });

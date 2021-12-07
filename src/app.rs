@@ -7,7 +7,7 @@ use crate::{
 };
 use generational_arena::Arena;
 use glam::Vec2;
-use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, HostInfo}};
+use hostess::{uuid::Uuid, client::Bincoded, client::ClientMsg, client::{ServerMsg, InstanceInfo}};
 
 
 // Dev flags
@@ -19,7 +19,7 @@ static DEV_SHOW_NETSTAT:bool        = false;
 static INSTRUCTIONS:[&str;3]        = ["Use WASD to Move.", "Use the mouse to point and shoot.", "Use tab to show the score"];
 
 pub struct App {
-    servers:Vec<HostInfo>,
+    servers:Vec<InstanceInfo>,
     player_name: String,
     debug: bool,
     app_state: AppState,
@@ -60,7 +60,7 @@ enum AppState {
     /// player is ready to join
     JoinLobby,
     InLobby,
-    JoinServer {server:HostInfo},
+    JoinServer {server:InstanceInfo},
     /// when in game and playing
     InGame,
 }
@@ -476,18 +476,18 @@ impl App {
 
     pub fn recv(&mut self, msg: &ServerMsg) {
         match msg {
-            ServerMsg::LobbyJoined {} => {
+            ServerMsg::JoinedLobby {} => {
                 self.connection_status = "Connected to Server".into();
             }
-            ServerMsg::Hosts { hosts } => {
+            ServerMsg::Instances { instances } => {
                 let c = self.servers.len();
-                self.servers = hosts.clone();
+                self.servers = instances.clone();
                 if c == 0 {
                     self.new_app_state(AppState::InLobby);
                 }
             }
-            ServerMsg::HostJoined { host } => {
-                self.connection_status = format!("✓ Joined host {} ✓ ", host.id);
+            ServerMsg::JoinedInstance { instance } => {
+                self.connection_status = format!("✓ Joined server {} ✓ ", instance.id);
                 self.new_app_state(AppState::InGame);
             }
             ServerMsg::Pong {
@@ -558,7 +558,7 @@ impl App {
 
         // if in lobby, refresh list of servers each 60th update
         if self.app_state == AppState::InLobby && self.updates % 60 == 0 {
-            self.send(ClientMsg::RefreshHosts {
+            self.send(ClientMsg::RefreshInstances {
             });
         }
 
@@ -671,7 +671,7 @@ impl App {
             AppState::InLobby => {
                 if key == "Enter" {
                     // select recommended server
-                    let mut recommended_server_option:Option<HostInfo> = None;
+                    let mut recommended_server_option:Option<InstanceInfo> = None;
                     for server in self.servers.iter() {
                         // find the server with most players but still space avaliable
                         if server.current_players < server.max_players {
@@ -790,14 +790,14 @@ impl App {
                     if let Some(host) = self.servers.first() {
                         self.connection_status = format!("Joining host {}..", host.id);
                         let id = host.id;
-                        self.send(ClientMsg::JoinHost { host_id: id });
+                        self.send(ClientMsg::JoinInstance { instance_id: id });
                     }
                 }
             },
             AppState::JoinServer { server} => {
                 self.connection_status = format!("Joining host {}..", server.id);
                 let id = server.id;
-                self.send(ClientMsg::JoinHost { host_id: id });
+                self.send(ClientMsg::JoinInstance { instance_id: id });
             },
             AppState::EnterName { name:_} => {
                 if DEV_QUICK_LOGIN {
