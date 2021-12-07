@@ -51,7 +51,7 @@ pub fn update_things(state: &mut State, dt: f64) {
                         remove.push(id);
                         hits.push((owner, target));
                     }
-                    CollisionResult::Polyline(id, normal) => {
+                    CollisionResult::Polyline(id, _normal) => {
                         remove.push(id);
                     }
                 }
@@ -88,7 +88,7 @@ pub fn update_things(state: &mut State, dt: f64) {
     }
 
     // player respawn handling
-    for (id, thing) in state.things.iter_mut() {
+    for (_id, thing) in state.things.iter_mut() {
         if let Thing::Player(player) = thing {
             if !player.is_alive() {
                 if player.spawn_pos == None {
@@ -107,7 +107,7 @@ pub fn update_things(state: &mut State, dt: f64) {
     for (id, thing) in state.things.iter_mut() {
         let clamped = clamp_to_bounds(thing, state.width, state.height);
 
-        if let Thing::Projectile(projectile) = thing {
+        if let Thing::Projectile(_projectile) = thing {
             if clamped {
                 remove.push(id);
             }
@@ -143,20 +143,6 @@ pub struct Circle {
     pub r: f32,
 }
 
-/// performs a test between two circles
-fn collision_test_circle_circle(circle1: Circle, circle2: Circle) -> bool {
-    let d = circle1.c - circle2.c;
-    if d.length() > 0.0 {
-        let l = circle1.r + circle2.r;
-        let l = d.length() - l;
-        if l < 0.0 {
-            return true;
-        }
-    }
-
-    false
-}
-
 #[derive(PartialEq)]
 pub enum CollisionResult {
     None,
@@ -172,7 +158,6 @@ pub fn move_thing_direct_sweep(
 ) -> CollisionResult {
     let mut result = CollisionResult::None;
     let vel = new_pos - *thing.1.pos();
-    let mut ok_pos = *thing.1.pos();
     if vel.length() > 0.0 {
         let mut dist = vel.length();
         let max_step = *thing.1.radius() / 2.0;
@@ -184,16 +169,6 @@ pub fn move_thing_direct_sweep(
             new_pos += d * step;
             result = move_thing_direct((thing.0, thing.1), new_pos, state, ignore);
             dist -= step;
-
-            // do a test to see if we are colliding, if so overwrite current pos with last
-            // known ok pos
-        /*    let p = *thing.1.pos();
-            if move_thing_direct((thing.0, thing.1), p, state, ignore) == CollisionResult::None {
-                ok_pos = new_pos;
-            } else {
-                *thing.1.pos_mut() = ok_pos;
-                break;
-            }*/
 
             if result != CollisionResult::None {
                 break;
@@ -261,7 +236,7 @@ fn move_thing_direct(
             return result;
         }*/
 
-        for (id, p) in &state.map.polylines {
+        for (_id, p) in &state.map.polylines {
             let mut points = Vec::new();
             for p in &p.points {
                 points.push([p.x, p.y].into());

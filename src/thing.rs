@@ -2,8 +2,6 @@ use generational_arena::Index;
 use glam::Vec2;
 use serde::{Deserialize, Serialize};
 
-use crate::State;
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Solid {
     /// not solid, does not influence its own movement nor others
